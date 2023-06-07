@@ -1,9 +1,10 @@
 import React from "react"; // , { useEffect, useState }
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import { ProtectedRoute } from "./protected-route";
 import Login from "./Login/containers/login-container";
+import { ProtectedRoute } from "./protected-route";
 
+import EditOnboarding from "./Home/components/EditOnboarding";
 import HomeList from "./Home/containers/home-list";
 
 import { signOut } from "./Utils/auth";
@@ -24,6 +25,7 @@ function App() {
         <Route exact path="/" component={Login} />
         <Route exact path="/logout" component={logingOut} />
         <ProtectedRoute exact path="/home" component={HomeList} />
+        <ProtectedRoute path="/edit/:id" component={EditOnboarding} />
       </Switch>
     </Router>
   );

@@ -103,7 +103,7 @@ function Layout(props) {
           <ListItemIcon>
             <BarChartIcon className={classes.drawerOption} />
           </ListItemIcon>
-          <ListItemText className={classes.drawerOption} primary={"HOME"} />
+          <ListItemText className={classes.drawerOption} primary={"Nuevos"} />
         </ListItem>
 
         <ListItem
@@ -117,7 +117,7 @@ function Layout(props) {
           </ListItemIcon>
           <ListItemText
             className={classes.drawerOption}
-            primary={"CERRAR SESIÓN"}
+            primary={"Cerrar Sesión"}
           />
         </ListItem>
       </List>
