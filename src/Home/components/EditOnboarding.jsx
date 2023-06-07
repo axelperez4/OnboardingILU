@@ -211,7 +211,7 @@ const EditOnboarding = () => {
                         rows={rowsRecursos}
                         columns={columnsRecursos}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectionChange}
+                        onSelectionModelChange={handleSeleweewctionChange}
                         selectionModel={selectedRecursos}
                         autoHeight
                         autoWidth
@@ -227,7 +227,6 @@ const EditOnboarding = () => {
                 </Grid>
                 <Grid item xs={3}>
                     <Grid container spacing={2}>
-
 
                         {selectedDates.map((date, index) => (
                             <React.Fragment key={index}>
