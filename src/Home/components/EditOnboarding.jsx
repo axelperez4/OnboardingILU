@@ -211,7 +211,7 @@ const EditOnboarding = () => {
                         rows={rowsRecursos}
                         columns={columnsRecursos}
                         checkboxSelection
-                        onSelectionModelChange={handleSeleweewctionChange}
+                        onSelectionModelChange={handleSelectionChange}
                         selectionModel={selectedRecursos}
                         autoHeight
                         autoWidth
