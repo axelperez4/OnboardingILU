@@ -6,6 +6,22 @@ import axios from "axios";
 console.log("tha faking config xd", config);
 
 let BASE_API = config.env[config.env.environment].apiGateway.URL;
+let BASE_API_ONBOARDING = config.env[config.env.environment].apiGateway.ApiOnboarding;
+
+export async function getSimple(uri) {
+  const url = `${BASE_API_ONBOARDING}${uri}`;
+
+  try {
+    const request = await axios.get(`${BASE_API_ONBOARDING}${uri}`);
+    // server returned a 2XX response (success)
+    console.log(request);
+    return request.data
+  } catch (error) {
+    // Network failure or 4XX or 5XX response.
+    console.log(error.res);
+    return error
+  }
+}
 
 class Api {
   state = {
@@ -46,6 +62,11 @@ class Api {
     console.log("API[Login]: DATOS DE SESSION (TOKEN REQUEST)", request);
     return request;
   }
+
+
+  //MÉTODOS DE LA API DE ONBOARDING
+
+
 
   //**METODOS GENERALES***********//
 
@@ -143,11 +164,11 @@ class Api {
     const urlParameters =
       params != null
         ? "?" +
-          Object.keys(params)
-            .map(
-              (k) => encodeURIComponent(k) + "=" + encodeURIComponent(params[k])
-            )
-            .join("&")
+        Object.keys(params)
+          .map(
+            (k) => encodeURIComponent(k) + "=" + encodeURIComponent(params[k])
+          )
+          .join("&")
         : "";
 
     const fetchEndpoint = `${BASE_API}${uri}${urlParameters}`;

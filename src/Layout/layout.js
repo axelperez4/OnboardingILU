@@ -18,6 +18,9 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
 
+import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+
 const drawerWidth = 240;
 
 function Layout(props) {
@@ -101,9 +104,33 @@ function Layout(props) {
           }}
         >
           <ListItemIcon>
-            <BarChartIcon className={classes.drawerOption} />
+            <AddCircleOutlineIcon className={classes.drawerOption} />
           </ListItemIcon>
           <ListItemText className={classes.drawerOption} primary={"Nuevos"} />
+        </ListItem>
+
+        <ListItem
+          button
+          onClick={() => {
+            props.history.push("/pendientes");
+          }}
+        >
+          <ListItemIcon>
+            <QueryBuilderIcon className={classes.drawerOption} />
+          </ListItemIcon>
+          <ListItemText className={classes.drawerOption} primary={"Pendientes"} />
+        </ListItem>
+
+        <ListItem
+          button
+          onClick={() => {
+            props.history.push("/reportes");
+          }}
+        >
+          <ListItemIcon>
+            <BarChartIcon className={classes.drawerOption} />
+          </ListItemIcon>
+          <ListItemText className={classes.drawerOption} primary={"Reportes"} />
         </ListItem>
 
         <ListItem

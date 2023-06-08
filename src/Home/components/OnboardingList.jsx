@@ -16,7 +16,20 @@ const useStyles = makeStyles((theme) => ({
         width: '80%',
         maxHeight: '80vh',
         overflow: 'auto',
+        borderRadius: 8,
+        'border-style': 'double',
         //maxWidth: 800,
+    },
+    modalInnerContent: {
+        'overflow': 'auto',
+    },
+    cardPersona: {
+    },
+    cardFoto: {
+        alignSelf: 'center',
+    },
+    cardLabel: {
+        textAlign: 'left',
     },
 }));
 
@@ -38,29 +51,84 @@ const OnboardingList = ({ onboardingData }) => {
     return (
         <Grid container spacing={3} justify="center" alignItems="center">
             {onboardingData.map((onboarding, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Card style={{ height: '100%' }}>
-                        <CardMedia
-                            component="img"
-                            alt={onboarding.name}
-                            image={onboarding.photo}
-                            style={{ height: 200, width: '100%', objectFit: 'contain' }}
-                        />
-                        <CardContent style={{ textAlign: 'center' }}>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                {onboarding.name}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                Date: {onboarding.date}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                Status: {onboarding.status}
-                            </Typography>
-                            <Button variant="contained" color="primary" onClick={() => handleOpen(onboarding.id)}>
-                                Iniciar Proceso
-                            </Button>
-                        </CardContent>
-                    </Card>
+                <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
+                    <div className={classes.cardPersona}>
+                        <Card style={{ height: '100%' }}>
+                            <Grid container>
+                                <Grid item xs={4} className={classes.cardFoto}>
+                                    <CardMedia
+                                        component="img"
+                                        alt={onboarding.name}
+                                        image={onboarding.photo}
+                                        style={{ height: 200, width: '100%', objectFit: 'contain', borderRadius: 12 }}
+                                    />
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <CardContent style={{ textAlign: 'center' }}>
+                                        <Grid container justify="flex-end">
+                                            <Grid item xs={12}>
+                                                <Typography gutterBottom variant="h5" component="h2">
+                                                    {onboarding.name}
+                                                </Typography>
+
+                                            </Grid>
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    Ingreso:
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    {onboarding.date}
+                                                </Typography>
+                                            </Grid>
+
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    Departamento:
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    {onboarding.departamento}
+                                                </Typography>
+                                            </Grid>
+
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    Nivel:
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    {onboarding.nivel}
+                                                </Typography>
+                                            </Grid>
+
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    Estado:
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6} className={classes.cardLabel}>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    {onboarding.status}
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+
+
+
+
+                                        <br></br>
+                                        <Button variant="contained" color="primary" onClick={() => handleOpen(onboarding.id)}>
+                                            Iniciar Proceso
+                                        </Button>
+                                    </CardContent>
+                                </Grid>
+                            </Grid>
+                        </Card>
+                    </div>
                 </Grid>
             ))}
 
@@ -76,7 +144,9 @@ const OnboardingList = ({ onboardingData }) => {
             >
                 <Fade in={open}>
                     <div className={classes.modalContent}>
+                        {/* <div className={classes.modalInnerContent}> */}
                         <EditOnboarding onboardingId={selectedOnboardingId} />
+
                     </div>
                 </Fade>
             </Modal>

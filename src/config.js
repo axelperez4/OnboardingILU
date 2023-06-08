@@ -11,6 +11,7 @@ export default {
       apiGateway: {
         REGION: "us-east-1",
         URL: "https://api.launion.com.gt/",
+        ApiOnboarding: "http://localhost:52897/",
       },
     },
     dev: {

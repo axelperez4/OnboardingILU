@@ -6,6 +6,8 @@ import { ProtectedRoute } from "./protected-route";
 
 import EditOnboarding from "./Home/components/EditOnboarding";
 import HomeList from "./Home/containers/home-list";
+import PendientesContainer from "./Pendientes/Containers/PendientesContainer";
+import ReportesContainer from "./Reportes/Containers/ReportesContainer";
 
 import { signOut } from "./Utils/auth";
 
@@ -26,6 +28,8 @@ function App() {
         <Route exact path="/logout" component={logingOut} />
         <ProtectedRoute exact path="/home" component={HomeList} />
         <ProtectedRoute path="/edit/:id" component={EditOnboarding} />
+        <ProtectedRoute path="/pendientes" component={PendientesContainer} />
+        <ProtectedRoute path="/reportes" component={ReportesContainer} />
       </Switch>
     </Router>
   );

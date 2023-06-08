@@ -1,4 +1,4 @@
-import { Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from '@material-ui/core';
+import { Button, FormControl, Grid, IconButton, Modal, MenuItem, Select, TextField, InputLabel, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { DataGrid } from '@mui/x-data-grid';
@@ -7,7 +7,25 @@ import { useEffect } from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 
+import { getSimple } from '../../Utils/api';
+
 const useStyles = makeStyles((theme) => ({
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    modalContent: {
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+        width: '20%',
+        maxHeight: '80vh',
+        overflow: 'auto',
+        borderRadius: 8,
+        'border-style': 'double',
+        //maxWidth: 800,
+    },
     formControl: {
         width: '-webkit-fill-available',
     },
@@ -29,6 +47,12 @@ const EditOnboarding = () => {
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [selectedRecursos, setSelectedRecursos] = useState([]);
     const [selectedDates, setSelectedDates] = useState([getDefaultDate()]);
+    const [Wills, setWills] = useState([]);
+    const [Skills, setSkills] = useState([]);
+    const [Recursos, setRecursos] = useState([]);
+    const [RamasSkill, setRamasSkill] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedRamaSkill, setSelectedRamaSkill] = useState(null);
 
 
     // Helper function to get the default selected date (3 months ahead of the current date)
@@ -40,16 +64,69 @@ const EditOnboarding = () => {
     }
 
     useEffect(() => {
-        const defaultSelectedWills = rows.filter((row) => row.default).map((row) => row.id);
-        setSelectedWills(defaultSelectedWills);
-
-        const defaultSelectedSkills = rows.filter((row) => row.default).map((row) => row.id);
-        setSelectedSkills(defaultSelectedSkills);
-
-        const defaultSelectedRecursos = rows.filter((row) => row.default).map((row) => row.id);
-        setSelectedRecursos(defaultSelectedRecursos);
+        async function get() {
+            var response = await getRegistros('/api/Wills');
+            setWills(response);
+            response = await getRegistros('/api/Skills');
+            setSkills(response);
+            response = await getRegistros('api/Recursoes');
+            setRecursos(response);
+            response = await getRegistros('api/getRamasSkill');
+            setRamasSkill(response);
+        }
+        get();
     }, []);
 
+    useEffect(() => {
+        const defaultSelectedWills = Wills.filter((row) => row.PorDefecto).map((row) => row.Id);
+        setSelectedWills(defaultSelectedWills);
+
+        const defaultSelectedSkills = Skills.filter((row) => row.PorDefecto).map((row) => row.Id);
+        setSelectedSkills(defaultSelectedSkills);
+
+        const defaultSelectedRecursos = Recursos.filter((row) => row.PorDefecto).map((row) => row.Id);
+        setSelectedRecursos(defaultSelectedRecursos);
+    }, [Wills, Skills, Recursos]);
+
+    async function getRegistros(uri) {
+        try {
+            const response = await getSimple(uri);
+            console.log(response);
+            return response;
+        } catch (error) {
+            this.setState({ error: true });
+        } finally {
+            //this.setState({ loading: false })
+        }
+    }
+
+    const handlePost = async (url, data) => {
+        let baseUrl = 'http://localhost:52897/'
+        url = baseUrl + url;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            const json = await response.json();
+            let actualizacion = await getRegistros('/api/Skills');
+            setSkills(actualizacion);
+        } catch (error) {
+            console.log(error);
+        }
+
+        setOpenModal(false);
+        return null;
+    };
+
+    const handleAddNewSkill = () => {
+
+        setOpenModal(true);
+    };
     // Event handler for adding a Will to the selected list
     const handleAddWill = (will) => {
         setSelectedWills((prevSelectedWills) => [...prevSelectedWills, will]);
@@ -58,7 +135,7 @@ const EditOnboarding = () => {
     // Event handler for removing a Will from the selected list
     const handleRemoveWill = (will) => {
         setSelectedWills((prevSelectedWills) =>
-            prevSelectedWills.filter((selectedWill) => selectedWill.id !== will.id)
+            prevSelectedWills.filter((selectedWill) => selectedWill.Id !== will.Id)
         );
     };
 
@@ -70,7 +147,7 @@ const EditOnboarding = () => {
     // Event handler for removing a Skill from the selected list
     const handleRemoveSkill = (skill) => {
         setSelectedSkills((prevSelectedSkills) =>
-            prevSelectedSkills.filter((selectedSkill) => selectedSkill.id !== skill.id)
+            prevSelectedSkills.filter((selectedSkill) => selectedSkill.Id !== skill.Id)
         );
     };
 
@@ -82,7 +159,7 @@ const EditOnboarding = () => {
     // Event handler for removing a Recurso from the selected list
     const handleRemoveRecurso = (recurso) => {
         setSelectedRecursos((prevSelectedRecursos) =>
-            prevSelectedRecursos.filter((selectedRecurso) => selectedRecurso.id !== recurso.id)
+            prevSelectedRecursos.filter((selectedRecurso) => selectedRecurso.Id !== recurso.Id)
         );
     };
 
@@ -104,8 +181,19 @@ const EditOnboarding = () => {
         console.log('Save clicked!');
     };
 
-    const handleSelectionChange = (selection) => {
+    const handleSelectionChangeWill = (selection) => {
+        console.log(selection);
         setSelectedWills(selection.selectionModel);
+    };
+
+    const handleSelectionChangeSkill = (selection) => {
+        console.log(selection);
+        setSelectedSkills(selection.selectionModel);
+    };
+
+    const handleSelectionChangeRecurso = (selection) => {
+        console.log(selection);
+        setSelectedRecursos(selection.selectionModel);
     };
 
     const rows = [
@@ -117,9 +205,10 @@ const EditOnboarding = () => {
 
     const columns = [
 
-        { field: 'will', headerName: 'Will', flex: 1 },
-        { field: 'descripcion', headerName: 'Descripcion', flex: 1 },
-        { field: 'peso', headerName: 'Peso', flex: 1 },
+        { field: 'Will', headerName: 'Will', flex: 1 },
+        { field: 'Descripcion', headerName: 'Descripcion', flex: 1 },
+        { field: 'Peso', headerName: 'Peso', flex: 1 },
+
     ];
 
     const rowsSkills = [
@@ -135,8 +224,8 @@ const EditOnboarding = () => {
 
     const columnsSkills = [
 
-        { field: 'skill', headerName: 'Aspecto Técnico', flex: 1 },
-        { field: 'descripcion', headerName: 'Descripción', flex: 1 },
+        { field: 'Skill', headerName: 'Aspecto Técnico', flex: 1 },
+        { field: 'Descripcion', headerName: 'Descripción', flex: 1 },
     ];
 
     const rowsRecursos = [
@@ -146,8 +235,8 @@ const EditOnboarding = () => {
     ];
 
     const columnsRecursos = [
-        { field: 'descripcion', headerName: 'Descripción', flex: 1 },
-        { field: 'responsable', headerName: 'Responsable', flex: 1 },
+        { field: 'Descripcion', headerName: 'Descripción', flex: 1 },
+        { field: 'Responsable', headerName: 'Responsable', flex: 1 },
     ];
 
     return (
@@ -169,10 +258,11 @@ const EditOnboarding = () => {
                 </Grid>
                 <Grid item xs={12}>
                     <DataGrid
-                        rows={rows}
+                        rows={Wills ?? []}
+                        getRowId={(row) => row.Id}
                         columns={columns}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectionChange}
+                        onSelectionModelChange={handleSelectionChangeWill}
                         selectionModel={selectedWills}
                         autoHeight
                         autoWidth
@@ -182,17 +272,23 @@ const EditOnboarding = () => {
                 </Grid>
 
 
-                <Grid item xs={12}>
+                <Grid item xs={10}>
                     <Typography variant="h6" component="h3" gutterBottom>
                         Selecciona Skills para este onboarding:
                     </Typography>
                 </Grid>
+                <Grid item xs={2}>
+                    <Button variant="contained" color="primary" onClick={() => handleAddNewSkill()}>
+                        Agregar
+                    </Button>
+                </Grid>
                 <Grid item xs={12}>
                     <DataGrid
-                        rows={rowsSkills}
+                        rows={Skills ?? []}
+                        getRowId={(row) => row.Id}
                         columns={columnsSkills}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectionChange}
+                        onSelectionModelChange={handleSelectionChangeSkill}
                         selectionModel={selectedSkills}
                         autoHeight
                         autoWidth
@@ -200,6 +296,47 @@ const EditOnboarding = () => {
                     <br />
                     <br />
                 </Grid>
+                <Modal open={openModal} onClose={() => setOpenModal(false)} className={classes.modal}>
+                    <div className={classes.modalContent}>
+                        <h2>Agregar Skill</h2>
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            handlePost('api/Skills', { Descripcion: e.target.Descripcion.value, IdRamaSkill: selectedRamaSkill });
+                        }}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <FormControl className={classes.formControl}>
+                                        <TextField label="Descripcion" type="text" id="Descripcion" name="Descripcion" InputLabelProps={{ shrink: true }} />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl className={classes.formControl}>
+                                        <TextField
+                                            id="IdRamaSkill"
+                                            label="Seleccionar aspecto técnico"
+                                            value={selectedRamaSkill}
+                                            select
+                                            onChange={(e) => setSelectedRamaSkill(e.target.value)}
+                                        >
+                                            {RamasSkill.map((rs) => (
+                                                <MenuItem key={rs.Id} value={rs.Id}>
+                                                    {rs.Descripcion}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </FormControl>
+                                    <br />
+                                    <br />
+                                </Grid>
+                                <Grid item xs={12} className={classes.itemCentrado}>
+                                    <Button variant="contained" color="primary" type="submit">
+                                        Agregar
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </div>
+                </Modal>
 
                 <Grid item xs={12}>
                     <Typography variant="h6" component="h3" gutterBottom>
@@ -208,10 +345,11 @@ const EditOnboarding = () => {
                 </Grid>
                 <Grid item xs={12}>
                     <DataGrid
-                        rows={rowsRecursos}
+                        rows={Recursos ?? []}
+                        getRowId={(row) => row.Id}
                         columns={columnsRecursos}
                         checkboxSelection
-                        onSelectionModelChange={handleSelectionChange}
+                        onSelectionModelChange={handleSelectionChangeRecurso}
                         selectionModel={selectedRecursos}
                         autoHeight
                         autoWidth
